@@ -5,8 +5,10 @@
 # level 값은 0 또는 1입니다.
 # 0이면 "LOW", 1이면 "HIGH"를 반환해야 합니다.
 def gpio_level_to_state(level):
-    raise NotImplementedError
-
+    if level==0 :
+        return "LOW"
+    else :
+        return "HIGH"
 
 # 문제 2.
 #
@@ -16,8 +18,8 @@ def gpio_level_to_state(level):
 # 송신 데이터는 bytes 타입이어야 합니다.
 # UART 메시지 끝에는 newline 문자가 포함되어야 합니다.
 def make_uart_tx_packet(message):
-    raise NotImplementedError
-
+    packet = (message + '\n').encode()
+    return packet
 
 # 문제 3.
 #
@@ -26,7 +28,7 @@ def make_uart_tx_packet(message):
 # packet은 bytes 타입입니다.
 # 수신 데이터 끝의 newline 문자를 제거하고 문자열로 반환해야 합니다.
 def parse_uart_rx_packet(packet):
-    raise NotImplementedError
+    return packet.decode().strip()
 
 
 # 문제 4.
@@ -36,7 +38,8 @@ def parse_uart_rx_packet(packet):
 # address는 정수입니다.
 # 유효하면 True, 아니면 False를 반환해야 합니다.
 def is_valid_i2c_address(address):
-    raise NotImplementedError
+    
+    return 0 <= address <= 127
 
 
 # 문제 5.
@@ -50,4 +53,15 @@ def is_valid_i2c_address(address):
 #
 # [command, payload_length, payload...]
 def make_spi_transfer_frame(command, payload):
-    raise NotImplementedError
+    # Command 유효성 검사 (0~255)
+    if not (0 <= command <= 255):
+        raise ValueError("Command must be an integer between 0 and 255.")
+    # payload 유효성 검사 (0~255)
+    if not all(isinstance(x, int) and (0 <= x <= 255) for x in payload):
+        raise ValueError("All payload elements must be integers between 0 and 255.")
+
+    # payload 길이 계산
+    payload_length = len(payload)
+    
+    # 프레임 구성 및 반환
+    return [command, payload_length] + payload
